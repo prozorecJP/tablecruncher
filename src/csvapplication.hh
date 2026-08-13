@@ -92,7 +92,7 @@ namespace ui_icons {
 
 
 // Avoid errors with names included from X11 on Linux:
-#ifdef __linux__
+#if defined (__linux__) || defined (__FreeBSD__)
 	#ifdef Success
 	#undef Success
 	#endif

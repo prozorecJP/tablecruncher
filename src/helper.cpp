@@ -670,6 +670,8 @@ std::string Helper::getHomeDir() {
 	}
 	#elif __linux__
 	homeDir = getenv("HOME");
+	#elif __FreeBSD__
+	homeDir = getenv("HOME");
 	#endif
 	if( homeDir != nullptr ) {
 		homeDirStr.assign(homeDir);
