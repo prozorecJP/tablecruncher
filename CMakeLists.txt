@@ -57,7 +57,11 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(UNIX AND NOT APPLE)
-    set(LINUX TRUE)
+    if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+      set(FREEBSD TRUE)
+    else()
+      set(LINUX TRUE)
+    endif()
 endif()
 
 string(TIMESTAMP NOW "%Y-%m-%dT%H:%M")
@@ -88,6 +92,13 @@ elseif(LINUX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -DMY_VERSION=\\\"${APP_VERSION}\\\" -DMY_YEAR=\\\"${YEAR}\\\" -DMY_TODAY=\\\"${TODAY}\\\" -DMY_NOW=\\\"${NOW}\\\" -D_THREAD_SAFE -D_REENTRANT")
     if(APPIMAGE STREQUAL "1")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--dynamic-linker=/lib64/ld-linux-x86-64.so.2")
+    endif()
+elseif(FREEBSD)
+    message(STATUS "Building on FreeBSD...")
+    set(PLATFORM "FreeBSD")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -DMY_VERSION=\\\"${APP_VERSION}\\\" -DMY_YEAR=\\\"${YEAR}\\\" -DMY_TODAY=\\\"${TODAY}\\\" -DMY_NOW=\\\"${NOW}\\\" -D_THREAD_SAFE -D_REENTRANT")
+    if(APPIMAGE STREQUAL "1")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--dynamic-linker=/libexec/ld-elf.so.1")
     endif()
 endif()
 
@@ -120,6 +131,11 @@ else()
     add_executable(${PROJECT_NAME} ${SOURCES})
 endif()
 
+# include directories
+if (FREEBSD)
+    target_include_directories(${PROJECT_NAME} PRIVATE /usr/local/include)
+endif()
+
 # Link libraries
 if(APPLE)
     if(ARCH STREQUAL "arm")
@@ -148,6 +164,19 @@ elseif(LINUX)
         ${FLTKLIBDIR}/lib/libfltk.a
         ${FLTKLIBDIR}/lib/libfltk_images.a
         ${FLTKLIBDIR}/lib/libfltk_z.a
+        Xft
+        fontconfig
+        Xrender
+        X11
+        pthread
+        dl
+    )
+elseif(FREEBSD)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        ${FLTKLIBDIR}/lib/libfltk.a
+        ${FLTKLIBDIR}/lib/libfltk_images.a
+        ${FLTKLIBDIR}/lib/libfltk_z.a
+        -L/usr/local/lib
         Xft
         fontconfig
         Xrender
