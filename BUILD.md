@@ -110,3 +110,21 @@ Use `VS Studio C++` to build the application. Or use `cmake` in a "Developer Com
     ./build_appimage.sh
 
 
+## Build on FreeBSD
+
+### install packages
+
+    pkg install -y cmake git libXft pkgconf xorg-fonts
+
+### Build FLTK
+
+    ./configure --enable-localzlib --disable-wayland
+    make -j$(nproc)
+
+### Build Tablecruncher
+
+    mkdir -p build && cd build
+    rm -rf *
+    cmake -DFLTKDIR="/home/sf/Documents/Builds/fltk-1.4.3" ..
+    cmake --build . -- -j$(nproc)
+
