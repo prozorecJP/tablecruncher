@@ -97,9 +97,6 @@ elseif(FREEBSD)
     message(STATUS "Building on FreeBSD...")
     set(PLATFORM "FreeBSD")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -DMY_VERSION=\\\"${APP_VERSION}\\\" -DMY_YEAR=\\\"${YEAR}\\\" -DMY_TODAY=\\\"${TODAY}\\\" -DMY_NOW=\\\"${NOW}\\\" -D_THREAD_SAFE -D_REENTRANT")
-    if(APPIMAGE STREQUAL "1")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--dynamic-linker=/libexec/ld-elf.so.1")
-    endif()
 endif()
 
 # Source and header files
